@@ -1,0 +1,51 @@
+{
+  "app": {
+    "title": "Daily AI News",
+    "tagline": "The 10 most relevant AI stories — curated every day at 6pm."
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "history": "History",
+    "logout": "Sign out"
+  },
+  "login": {
+    "title": "Sign in",
+    "subtitle": "Enter the dashboard password to continue.",
+    "passwordLabel": "Password",
+    "submit": "Sign in",
+    "error": "Incorrect password.",
+    "loading": "Signing in…"
+  },
+  "dashboard": {
+    "todayHeading": "Today's edition",
+    "noEditionYet": "No edition yet for today.",
+    "noEditionHint": "The daily agent runs at 6:00 PM (America/Sao_Paulo). You can also trigger it manually.",
+    "triggerNow": "Run compilation now",
+    "running": "Compiling…",
+    "historyHeading": "Previous editions",
+    "noHistory": "No editions yet.",
+    "viewEdition": "Open"
+  },
+  "edition": {
+    "rank": "#{rank}",
+    "source": "Source: {source}",
+    "readMore": "Read original →",
+    "publishedAt": "Published {date}",
+    "whyItMatters": "Why it matters",
+    "category": "Category",
+    "backToDashboard": "← Back to dashboard",
+    "generatedAt": "Generated {date}"
+  },
+  "category": {
+    "launch": "Launch",
+    "research": "Research",
+    "technique": "Technique",
+    "business": "Business",
+    "policy": "Policy",
+    "other": "Other"
+  },
+  "locale": {
+    "en": "English",
+    "pt-BR": "Português (BR)"
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "name": "daily-ai-news",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "compile:local": "tsx scripts/run-compile-local.ts"
+  },
+  "dependencies": {
+    "@vercel/blob": "^2.3.3",
+    "ai": "^6.0.168",
+    "clsx": "^2.1.1",
+    "jose": "^6.2.2",
+    "lucide-react": "^1.11.0",
+    "next": "^16.2.4",
+    "next-intl": "^4.9.1",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5",
+    "rss-parser": "^3.13.0",
+    "tailwind-merge": "^3.5.0",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.2.4",
+    "@types/node": "^25.6.0",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "autoprefixer": "^10.5.0",
+    "dotenv": "^17.4.2",
+    "eslint": "^10.2.1",
+    "eslint-config-next": "^16.2.4",
+    "postcss": "^8.5.10",
+    "tailwindcss": "^4.2.4",
+    "tsx": "^4.21.0",
+    "typescript": "^6.0.3"
+  }
+}

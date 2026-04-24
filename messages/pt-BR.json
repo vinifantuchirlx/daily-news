@@ -1,0 +1,51 @@
+{
+  "app": {
+    "title": "Daily AI News",
+    "tagline": "As 10 notícias mais relevantes de IA — curadoria diária às 18h."
+  },
+  "nav": {
+    "dashboard": "Painel",
+    "history": "Histórico",
+    "logout": "Sair"
+  },
+  "login": {
+    "title": "Entrar",
+    "subtitle": "Informe a senha do painel para continuar.",
+    "passwordLabel": "Senha",
+    "submit": "Entrar",
+    "error": "Senha incorreta.",
+    "loading": "Entrando…"
+  },
+  "dashboard": {
+    "todayHeading": "Edição de hoje",
+    "noEditionYet": "Nenhuma edição disponível para hoje ainda.",
+    "noEditionHint": "O agente diário roda às 18:00 (America/Sao_Paulo). Você também pode disparar manualmente.",
+    "triggerNow": "Rodar compilação agora",
+    "running": "Compilando…",
+    "historyHeading": "Edições anteriores",
+    "noHistory": "Nenhuma edição ainda.",
+    "viewEdition": "Abrir"
+  },
+  "edition": {
+    "rank": "#{rank}",
+    "source": "Fonte: {source}",
+    "readMore": "Ler original →",
+    "publishedAt": "Publicado {date}",
+    "whyItMatters": "Por que importa",
+    "category": "Categoria",
+    "backToDashboard": "← Voltar ao painel",
+    "generatedAt": "Gerado {date}"
+  },
+  "category": {
+    "launch": "Lançamento",
+    "research": "Pesquisa",
+    "technique": "Técnica",
+    "business": "Negócios",
+    "policy": "Política",
+    "other": "Outros"
+  },
+  "locale": {
+    "en": "English",
+    "pt-BR": "Português (BR)"
+  }
+}
