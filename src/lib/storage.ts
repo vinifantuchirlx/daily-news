@@ -1,4 +1,4 @@
-import { list, put, head } from "@vercel/blob";
+import { list, put, get } from "@vercel/blob";
 import type { Edition } from "./types";
 import { promises as fs } from "node:fs";
 import path from "node:path";
@@ -31,7 +31,7 @@ export async function saveEdition(edition: Edition): Promise<{ url: string }> {
   }
 
   const { url } = await put(key, body, {
-    access: "public",
+    access: "private",
     contentType: "application/json",
     addRandomSuffix: false,
     allowOverwrite: true,
@@ -56,10 +56,10 @@ export async function getEdition(date: string): Promise<Edition | null> {
 
   const key = `${EDITION_PREFIX}${date}.json`;
   try {
-    const meta = await head(key);
-    const res = await fetch(meta.url, { cache: "no-store" });
-    if (!res.ok) return null;
-    return (await res.json()) as Edition;
+    const result = await get(key, { access: "private" });
+    if (!result || result.statusCode !== 200) return null;
+    const text = await new Response(result.stream).text();
+    return JSON.parse(text) as Edition;
   } catch {
     return null;
   }
