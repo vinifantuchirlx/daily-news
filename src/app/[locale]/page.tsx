@@ -1,7 +1,11 @@
 import { setRequestLocale, getTranslations } from "next-intl/server";
-import { Link } from "@/i18n/navigation";
 import Header from "@/components/Header";
-import ArticleCard from "@/components/ArticleCard";
+import Dateline from "@/components/Dateline";
+import HeroStory from "@/components/HeroStory";
+import SplitStory from "@/components/SplitStory";
+import ListRow from "@/components/ListRow";
+import StatsFooter from "@/components/StatsFooter";
+import HistoryGrid from "@/components/HistoryGrid";
 import CompileButton from "@/components/CompileButton";
 import { getEdition, listEditionDates } from "@/lib/storage";
 import { todayInSaoPauloIso } from "@/lib/utils";
@@ -17,7 +21,6 @@ export default async function DashboardPage({
   setRequestLocale(locale);
 
   const t = await getTranslations("dashboard");
-  const tEdition = await getTranslations("edition");
 
   const today = todayInSaoPauloIso();
   const [todayEdition, dates] = await Promise.all([
@@ -26,77 +29,70 @@ export default async function DashboardPage({
   ]);
 
   const history = dates.filter((d) => d !== today);
+  const issueNumber = dates.includes(today) ? dates.length : dates.length + 1;
+
+  const lead = todayEdition?.articles[0];
+  const splits = todayEdition?.articles.slice(1, 3) ?? [];
+  const rest = todayEdition?.articles.slice(3) ?? [];
 
   return (
     <div className="min-h-dvh">
       <Header />
-      <main className="mx-auto max-w-4xl px-6 py-8 space-y-10">
-        <section>
-          <div className="flex items-end justify-between flex-wrap gap-3">
-            <div>
-              <h2 className="text-2xl font-semibold tracking-tight">
-                {t("todayHeading")}{" "}
-                <span className="text-[var(--color-muted)] text-base font-normal">
-                  · {today}
-                </span>
-              </h2>
-              {todayEdition && (
-                <p className="text-xs text-[var(--color-muted)] mt-1">
-                  {tEdition("generatedAt", {
-                    date: new Date(todayEdition.generatedAt).toLocaleString(locale, {
-                      dateStyle: "medium",
-                      timeStyle: "short",
-                    }),
-                  })}
-                </p>
-              )}
-            </div>
-            <CompileButton />
-          </div>
+      <main className="mx-auto max-w-7xl px-4 sm:px-8 py-10 sm:py-14 space-y-14">
+        {todayEdition && lead ? (
+          <>
+            <section className="space-y-6">
+              <Dateline date={today} issueNumber={issueNumber} />
+              <HeroStory article={lead} />
+            </section>
 
-          {todayEdition ? (
-            <div className="mt-6 space-y-3">
-              {todayEdition.articles.map((a) => (
-                <ArticleCard key={a.id} article={a} />
-              ))}
-            </div>
-          ) : (
-            <div className="mt-6 rounded-2xl border border-dashed p-8 text-center">
-              <p className="font-medium">{t("noEditionYet")}</p>
-              <p className="text-sm text-[var(--color-muted)] mt-1">
-                {t("noEditionHint")}
-              </p>
-            </div>
-          )}
-        </section>
+            {splits.length > 0 && (
+              <section className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                {splits.map((a) => (
+                  <SplitStory key={a.id} article={a} />
+                ))}
+              </section>
+            )}
 
-        <section>
-          <h2 className="text-xl font-semibold tracking-tight">
-            {t("historyHeading")}
-          </h2>
-          {history.length === 0 ? (
-            <p className="mt-3 text-sm text-[var(--color-muted)]">
-              {t("noHistory")}
+            {rest.length > 0 && (
+              <section>
+                <div className="flex items-center gap-4 mb-2">
+                  <p className="eyebrow">{t("theRest")}</p>
+                  <span className="flex-1 h-px bg-[var(--border)]" />
+                </div>
+                <div className="bg-[var(--surface)] border border-[var(--border)] rounded-2xl px-6 sm:px-8">
+                  {rest.map((a) => (
+                    <ListRow key={a.id} article={a} />
+                  ))}
+                </div>
+              </section>
+            )}
+
+            <section className="border-t border-[var(--border)] pt-6">
+              <StatsFooter edition={todayEdition} locale={locale} />
+            </section>
+          </>
+        ) : (
+          <section className="text-center py-16 sm:py-24 space-y-6">
+            <Dateline date={today} />
+            <h2 className="font-display text-4xl sm:text-5xl tracking-tight font-medium">
+              {t("noEditionYet")}
+            </h2>
+            <p className="font-serif italic text-[var(--muted)] max-w-md mx-auto">
+              {t("noEditionHint")}
             </p>
-          ) : (
-            <ul className="mt-4 grid sm:grid-cols-2 gap-3">
-              {history.map((date) => (
-                <li key={date}>
-                  <Link
-                    href={`/editions/${date}`}
-                    className="block rounded-xl border p-4 hover:bg-[var(--color-surface-2)]/60"
-                  >
-                    <div className="flex items-center justify-between">
-                      <span className="font-mono text-sm">{date}</span>
-                      <span className="text-xs text-[var(--color-accent)]">
-                        {t("viewEdition")} →
-                      </span>
-                    </div>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          )}
+            <div className="flex justify-center pt-4">
+              <CompileButton variant="primary" />
+            </div>
+          </section>
+        )}
+
+        <section className="space-y-5 pt-4">
+          <div className="flex items-center gap-4">
+            <p className="eyebrow">{t("historyHeading")}</p>
+            <span className="flex-1 h-px bg-[var(--border)]" />
+          </div>
+          <HistoryGrid dates={history} locale={locale} />
         </section>
       </main>
     </div>

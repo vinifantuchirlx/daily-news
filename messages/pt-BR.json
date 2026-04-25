@@ -1,12 +1,38 @@
 {
   "app": {
     "title": "Daily AI News",
-    "tagline": "As 10 notícias mais relevantes de IA — curadoria diária às 18h."
+    "tagline": "As 10 notícias mais relevantes de IA — curadoria diária às 18h.",
+    "weekday": {
+      "0": "Domingo",
+      "1": "Segunda",
+      "2": "Terça",
+      "3": "Quarta",
+      "4": "Quinta",
+      "5": "Sexta",
+      "6": "Sábado"
+    },
+    "month": {
+      "0": "Janeiro",
+      "1": "Fevereiro",
+      "2": "Março",
+      "3": "Abril",
+      "4": "Maio",
+      "5": "Junho",
+      "6": "Julho",
+      "7": "Agosto",
+      "8": "Setembro",
+      "9": "Outubro",
+      "10": "Novembro",
+      "11": "Dezembro"
+    }
   },
   "nav": {
     "dashboard": "Painel",
     "history": "Histórico",
-    "logout": "Sair"
+    "logout": "Sair",
+    "themeLight": "Modo claro",
+    "themeDark": "Modo escuro",
+    "compileTooltip": "Compilar nova edição"
   },
   "login": {
     "title": "Entrar",
@@ -17,24 +43,30 @@
     "loading": "Entrando…"
   },
   "dashboard": {
+    "todayEyebrow": "Edição de hoje",
+    "issueLabel": "Edição",
+    "theRest": "O restante",
     "todayHeading": "Edição de hoje",
-    "noEditionYet": "Nenhuma edição disponível para hoje ainda.",
+    "noEditionYet": "Nenhuma edição publicada hoje",
     "noEditionHint": "O agente diário roda às 18:00 (America/Sao_Paulo). Você também pode disparar manualmente.",
-    "triggerNow": "Rodar compilação agora",
+    "triggerNow": "Compilar edição de hoje",
     "running": "Compilando…",
     "historyHeading": "Edições anteriores",
-    "noHistory": "Nenhuma edição ainda.",
+    "noHistory": "Nenhuma edição anterior.",
     "viewEdition": "Abrir"
   },
   "edition": {
     "rank": "#{rank}",
     "source": "Fonte: {source}",
-    "readMore": "Ler original →",
+    "readMore": "Ler original",
     "publishedAt": "Publicado {date}",
     "whyItMatters": "Por que importa",
     "category": "Categoria",
-    "backToDashboard": "← Voltar ao painel",
-    "generatedAt": "Gerado {date}"
+    "backToDashboard": "Voltar ao painel",
+    "generatedAt": "Compilado {date}",
+    "expand": "Expandir",
+    "collapse": "Recolher",
+    "stats": "{sources} fontes · {deduped} histórias deduplicadas · ~{tokens}k tokens"
   },
   "category": {
     "launch": "Lançamento",
@@ -45,7 +77,9 @@
     "other": "Outros"
   },
   "locale": {
-    "en": "English",
-    "pt-BR": "Português (BR)"
+    "en": "EN",
+    "pt-BR": "PT",
+    "enLong": "English",
+    "pt-BRLong": "Português (BR)"
   }
 }

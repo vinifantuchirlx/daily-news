@@ -36,3 +36,6 @@ yarn-error.log*
 
 # local data
 /data/local/
+
+# test/preview artifacts
+.playwright-mcp/

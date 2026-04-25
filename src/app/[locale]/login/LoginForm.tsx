@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter, useSearchParams } from "next/navigation";
+import { Loader2, ArrowRight } from "lucide-react";
 
 export default function LoginForm() {
   const t = useTranslations("login");
@@ -39,36 +40,43 @@ export default function LoginForm() {
   }
 
   return (
-    <form
-      onSubmit={onSubmit}
-      className="w-full max-w-sm rounded-2xl border p-8 bg-[var(--color-surface)]/70 backdrop-blur"
-    >
-      <h1 className="text-2xl font-semibold tracking-tight">{tApp("title")}</h1>
-      <p className="text-sm text-[var(--color-muted)] mt-1">{t("subtitle")}</p>
+    <form onSubmit={onSubmit} className="w-full max-w-md">
+      <p className="eyebrow">{tApp("tagline").split(" — ")[0] || tApp("title")}</p>
+      <h1 className="font-display text-5xl sm:text-6xl tracking-tight font-medium mt-3 leading-[1.05]">
+        {tApp("title")}
+      </h1>
+      <p className="font-serif italic text-[var(--muted)] mt-4 text-lg max-w-sm">
+        {t("subtitle")}
+      </p>
 
-      <label className="block mt-6 text-sm">
-        {t("passwordLabel")}
+      <label className="block mt-10">
+        <span className="eyebrow">{t("passwordLabel")}</span>
         <input
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="mt-2 w-full rounded-lg border bg-[var(--color-surface-2)] px-3 py-2 outline-none focus:border-[var(--color-accent)]"
+          className="mt-2 w-full bg-transparent border-b border-[var(--border)] focus:border-[var(--fg)] outline-none text-2xl font-display py-2 transition-colors"
           autoFocus
           required
         />
       </label>
 
       {error && (
-        <p className="mt-3 text-sm text-red-400" role="alert">
+        <p className="mt-3 text-sm text-rose-500" role="alert">
           {error}
         </p>
       )}
 
       <button
         type="submit"
-        disabled={loading}
-        className="mt-6 w-full rounded-lg bg-[var(--color-accent)] text-[var(--color-accent-fg)] font-medium py-2.5 disabled:opacity-60"
+        disabled={loading || !password}
+        className="mt-8 inline-flex items-center gap-2 rounded-full bg-[var(--fg)] text-[var(--bg)] font-sans font-semibold text-sm px-6 py-3 disabled:opacity-50 hover:opacity-90 transition-opacity"
       >
+        {loading ? (
+          <Loader2 size={14} className="animate-spin" />
+        ) : (
+          <ArrowRight size={14} className="arrow" />
+        )}
         {loading ? t("loading") : t("submit")}
       </button>
     </form>
