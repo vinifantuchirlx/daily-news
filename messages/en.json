@@ -45,6 +45,7 @@
   },
   "dashboard": {
     "todayEyebrow": "Today's briefing",
+    "latestEyebrow": "Latest briefing",
     "issueLabel": "Issue",
     "theRest": "The rest",
     "todayHeading": "Today's edition",

@@ -32,21 +32,35 @@ export default async function DashboardPage({
     listEditionDates(30),
   ]);
 
-  const history = dates.filter((d) => d !== today);
-  const issueNumber = dates.includes(today) ? dates.length : dates.length + 1;
+  // Fall back to the most recent edition when today hasn't been compiled yet.
+  const fallbackDate = !todayEdition ? dates.find((d) => d !== today) : null;
+  const fallbackEdition = fallbackDate ? await getEdition(fallbackDate) : null;
+  const displayedEdition = todayEdition ?? fallbackEdition;
+  const displayedDate = todayEdition ? today : fallbackDate ?? today;
+  const isStale = !todayEdition && !!fallbackEdition;
 
-  const lead = todayEdition?.articles[0];
-  const splits = todayEdition?.articles.slice(1, 3) ?? [];
-  const rest = todayEdition?.articles.slice(3) ?? [];
+  const history = dates.filter((d) => d !== displayedDate);
+  // dates is sorted desc; issue number is the chronological position from oldest.
+  const issueNumber = displayedEdition
+    ? dates.length - dates.indexOf(displayedDate)
+    : dates.length + 1;
+
+  const lead = displayedEdition?.articles[0];
+  const splits = displayedEdition?.articles.slice(1, 3) ?? [];
+  const rest = displayedEdition?.articles.slice(3) ?? [];
 
   return (
     <div className="min-h-dvh">
       <Header />
       <main className="mx-auto max-w-7xl px-4 sm:px-8 py-10 sm:py-14 space-y-14">
-        {todayEdition && lead ? (
+        {displayedEdition && lead ? (
           <>
             <section className="space-y-6">
-              <Dateline date={today} issueNumber={issueNumber} />
+              <Dateline
+                date={displayedDate}
+                issueNumber={issueNumber}
+                eyebrow={isStale ? t("latestEyebrow") : undefined}
+              />
               <HeroStory article={lead} />
             </section>
 
@@ -73,7 +87,7 @@ export default async function DashboardPage({
             )}
 
             <section className="border-t border-[var(--border)] pt-6">
-              <StatsFooter edition={todayEdition} locale={locale} />
+              <StatsFooter edition={displayedEdition} locale={locale} />
             </section>
           </>
         ) : (
