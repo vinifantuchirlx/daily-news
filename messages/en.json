@@ -30,6 +30,7 @@
     "dashboard": "Dashboard",
     "history": "History",
     "logout": "Sign out",
+    "signIn": "Sign in",
     "themeLight": "Light mode",
     "themeDark": "Dark mode",
     "compileTooltip": "Compile a new edition"

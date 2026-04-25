@@ -30,6 +30,7 @@
     "dashboard": "Painel",
     "history": "Histórico",
     "logout": "Sair",
+    "signIn": "Entrar",
     "themeLight": "Modo claro",
     "themeDark": "Modo escuro",
     "compileTooltip": "Compilar nova edição"

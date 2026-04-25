@@ -1,3 +1,4 @@
+import { cookies } from "next/headers";
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import Header from "@/components/Header";
 import Dateline from "@/components/Dateline";
@@ -8,6 +9,7 @@ import StatsFooter from "@/components/StatsFooter";
 import HistoryGrid from "@/components/HistoryGrid";
 import CompileButton from "@/components/CompileButton";
 import { getEdition, listEditionDates } from "@/lib/storage";
+import { sessionCookie, verifySessionToken } from "@/lib/auth";
 import { todayInSaoPauloIso } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
@@ -23,6 +25,8 @@ export default async function DashboardPage({
   const t = await getTranslations("dashboard");
 
   const today = todayInSaoPauloIso();
+  const sessionToken = (await cookies()).get(sessionCookie.name)?.value;
+  const isAdmin = sessionToken ? await verifySessionToken(sessionToken) : false;
   const [todayEdition, dates] = await Promise.all([
     getEdition(today),
     listEditionDates(30),
@@ -81,9 +85,11 @@ export default async function DashboardPage({
             <p className="font-serif italic text-[var(--muted)] max-w-md mx-auto">
               {t("noEditionHint")}
             </p>
-            <div className="flex justify-center pt-4">
-              <CompileButton variant="primary" />
-            </div>
+            {isAdmin && (
+              <div className="flex justify-center pt-4">
+                <CompileButton variant="primary" />
+              </div>
+            )}
           </section>
         )}
 

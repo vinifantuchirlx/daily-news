@@ -1,26 +1,23 @@
-"use client";
-
-import { useTranslations } from "next-intl";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { LogOut } from "lucide-react";
+import { cookies } from "next/headers";
+import { getTranslations } from "next-intl/server";
+import { LogIn } from "lucide-react";
 import { Link } from "@/i18n/navigation";
+import { sessionCookie, verifySessionToken } from "@/lib/auth";
 import LocaleSwitcher from "./LocaleSwitcher";
 import ThemeToggle from "./ThemeToggle";
 import CompileButton from "./CompileButton";
+import SignOutButton from "./SignOutButton";
 
-export default function Header() {
-  const t = useTranslations("app");
-  const tNav = useTranslations("nav");
-  const router = useRouter();
-  const [signingOut, setSigningOut] = useState(false);
+async function isAuthenticated(): Promise<boolean> {
+  const token = (await cookies()).get(sessionCookie.name)?.value;
+  if (!token) return false;
+  return verifySessionToken(token);
+}
 
-  async function onLogout() {
-    setSigningOut(true);
-    await fetch("/api/auth/logout", { method: "POST" });
-    router.replace("/login");
-    router.refresh();
-  }
+export default async function Header() {
+  const t = await getTranslations("app");
+  const tNav = await getTranslations("nav");
+  const authed = await isAuthenticated();
 
   return (
     <header className="sticky top-0 z-40 border-b border-[var(--border)] bg-[var(--bg)]/80 backdrop-blur-md">
@@ -32,18 +29,21 @@ export default function Header() {
         </Link>
 
         <div className="flex items-center gap-2 sm:gap-3">
-          <CompileButton variant="icon" />
+          {authed && <CompileButton variant="icon" />}
           <ThemeToggle />
           <LocaleSwitcher />
-          <button
-            onClick={onLogout}
-            disabled={signingOut}
-            aria-label={tNav("logout")}
-            title={tNav("logout")}
-            className="grid place-items-center w-9 h-9 rounded-full border border-[var(--border)] hover:bg-[var(--surface-2)] transition-colors disabled:opacity-60"
-          >
-            <LogOut size={16} />
-          </button>
+          {authed ? (
+            <SignOutButton />
+          ) : (
+            <Link
+              href="/login"
+              aria-label={tNav("signIn")}
+              title={tNav("signIn")}
+              className="grid place-items-center w-9 h-9 rounded-full border border-[var(--border)] hover:bg-[var(--surface-2)] transition-colors"
+            >
+              <LogIn size={16} />
+            </Link>
+          )}
         </div>
       </div>
     </header>
