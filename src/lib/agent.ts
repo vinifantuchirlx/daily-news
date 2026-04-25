@@ -1,5 +1,4 @@
 import { generateObject } from "ai";
-import { anthropic } from "@ai-sdk/anthropic";
 import { z } from "zod";
 import type {
   Edition,
@@ -127,8 +126,7 @@ export async function compileEdition(
     );
   }
 
-  const modelName = (opts.model ?? process.env.AI_MODEL ?? "anthropic/claude-sonnet-4-6").replace(/^anthropic\//, "");
-  const model = anthropic(modelName);
+  const model = opts.model ?? process.env.AI_MODEL ?? "anthropic/claude-sonnet-4-6";
 
   const { object, usage } = await generateObject({
     model,
