@@ -1,4 +1,5 @@
 import { generateObject } from "ai";
+import { anthropic } from "@ai-sdk/anthropic";
 import { z } from "zod";
 import type {
   Edition,
@@ -57,13 +58,12 @@ const SelectionSchema = z.object({
     .array(
       z.object({
         id: z.string().describe("The article id from the input list"),
-        rank: z.number().int().min(1).max(10),
+        rank: z
+          .number()
+          .describe("Integer position 1-10, where 1 = most consequential story"),
         score: z
           .number()
-          .int()
-          .min(0)
-          .max(100)
-          .describe("Relevance to the global AI community, 0-100"),
+          .describe("Integer relevance to the global AI community, 0-100"),
         category: z.enum(CATEGORIES),
         summaryEn: z
           .string()
@@ -78,8 +78,7 @@ const SelectionSchema = z.object({
           .string()
           .describe("1 frase: por que isso importa para quem trabalha com IA"),
       }),
-    )
-    .length(10),
+    ),
 });
 
 const SYSTEM = `You are the editor of a daily AI newsletter for a senior technical audience
@@ -128,7 +127,8 @@ export async function compileEdition(
     );
   }
 
-  const model = opts.model ?? process.env.AI_MODEL ?? "anthropic/claude-sonnet-4-6";
+  const modelName = (opts.model ?? process.env.AI_MODEL ?? "anthropic/claude-sonnet-4-6").replace(/^anthropic\//, "");
+  const model = anthropic(modelName);
 
   const { object, usage } = await generateObject({
     model,
