@@ -83,5 +83,21 @@
     "pt-BR": "PT",
     "enLong": "English",
     "pt-BRLong": "Português (BR)"
+  },
+  "subtitles": {
+    "navTitle": "Legendas ao vivo",
+    "eyebrow": "Tradução ao vivo",
+    "title": "Legendas estilo cinema",
+    "subtitleText": "Fale no seu celular e veja a frase completa traduzida aparecer na tela, como a legenda de um filme.",
+    "spoken": "Falado",
+    "subtitle": "Legenda",
+    "start": "Toque para ouvir",
+    "stop": "Toque para parar",
+    "idleHint": "Toque no microfone e comece a falar.",
+    "listeningHint": "Ouvindo… termine uma frase e ela aparecerá aqui.",
+    "unsupported": "O reconhecimento de fala não é suportado neste navegador. Use o Chrome no Android ou o Safari no iOS.",
+    "micDenied": "O acesso ao microfone foi negado. Ative nas configurações do navegador e tente novamente.",
+    "recognitionError": "Algo deu errado com o reconhecimento de fala. Tente novamente.",
+    "translateError": "Não foi possível traduzir essa frase. Verifique sua conexão."
   }
 }

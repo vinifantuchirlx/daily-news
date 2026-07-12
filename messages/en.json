@@ -83,5 +83,21 @@
     "pt-BR": "PT",
     "enLong": "English",
     "pt-BRLong": "Português (BR)"
+  },
+  "subtitles": {
+    "navTitle": "Live subtitles",
+    "eyebrow": "Live translation",
+    "title": "Movie-style subtitles",
+    "subtitleText": "Speak into your phone and see the full translated sentence appear on screen, just like a film subtitle.",
+    "spoken": "Spoken",
+    "subtitle": "Subtitle",
+    "start": "Tap to listen",
+    "stop": "Tap to stop",
+    "idleHint": "Tap the microphone and start speaking.",
+    "listeningHint": "Listening… finish a sentence and it will appear here.",
+    "unsupported": "Speech recognition isn't supported in this browser. Try Chrome on Android or Safari on iOS.",
+    "micDenied": "Microphone access was denied. Enable it in your browser settings and try again.",
+    "recognitionError": "Something went wrong with speech recognition. Try again.",
+    "translateError": "Couldn't translate that sentence. Check your connection."
   }
 }

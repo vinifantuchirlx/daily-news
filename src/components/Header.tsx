@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 import { getTranslations } from "next-intl/server";
-import { LogIn } from "lucide-react";
+import { LogIn, Captions } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { sessionCookie, verifySessionToken } from "@/lib/auth";
 import LocaleSwitcher from "./LocaleSwitcher";
@@ -17,6 +17,7 @@ async function isAuthenticated(): Promise<boolean> {
 export default async function Header() {
   const t = await getTranslations("app");
   const tNav = await getTranslations("nav");
+  const tSub = await getTranslations("subtitles");
   const authed = await isAuthenticated();
 
   return (
@@ -29,6 +30,14 @@ export default async function Header() {
         </Link>
 
         <div className="flex items-center gap-2 sm:gap-3">
+          <Link
+            href="/subtitles"
+            aria-label={tSub("navTitle")}
+            title={tSub("navTitle")}
+            className="grid place-items-center w-9 h-9 rounded-full border border-[var(--border)] hover:bg-[var(--surface-2)] transition-colors"
+          >
+            <Captions size={16} />
+          </Link>
           {authed && <CompileButton variant="icon" />}
           <ThemeToggle />
           <LocaleSwitcher />
