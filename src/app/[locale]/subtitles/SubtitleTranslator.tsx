@@ -45,8 +45,12 @@ export default function SubtitleTranslator() {
 
   const [supported, setSupported] = useState(true);
   const [listening, setListening] = useState(false);
+  const [capturing, setCapturing] = useState(false);
   const [sourceSpeech, setSourceSpeech] = useState("en-US");
   const [targetTranslate, setTargetTranslate] = useState("pt");
+  // Pause (ms) of silence before a buffered block is treated as complete.
+  // 0 = translate every sentence on its own; higher = group into paragraphs.
+  const [groupingMs, setGroupingMs] = useState(2500);
   const [lines, setLines] = useState<Line[]>([]);
   const [error, setError] = useState<string | null>(null);
 
@@ -56,8 +60,13 @@ export default function SubtitleTranslator() {
   const listeningRef = useRef(false);
   const sourceRef = useRef(sourceSpeech);
   const targetRef = useRef(targetTranslate);
+  const groupingRef = useRef(groupingMs);
   const idRef = useRef(0);
   const stageRef = useRef<HTMLDivElement | null>(null);
+  // Sentences the recognizer has finalized but that we haven't flushed yet,
+  // plus the debounce timer that decides when the paragraph is "done".
+  const bufferRef = useRef<string[]>([]);
+  const flushTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     sourceRef.current = sourceSpeech;
@@ -65,6 +74,9 @@ export default function SubtitleTranslator() {
   useEffect(() => {
     targetRef.current = targetTranslate;
   }, [targetTranslate]);
+  useEffect(() => {
+    groupingRef.current = groupingMs;
+  }, [groupingMs]);
 
   useEffect(() => {
     setSupported(getRecognitionCtor() !== null);
@@ -108,11 +120,27 @@ export default function SubtitleTranslator() {
     }
   }, [t]);
 
+  // Join every buffered sentence into one block and translate it as a whole,
+  // so the on-screen subtitle is a full paragraph rather than a stream of
+  // separate one-line phrases.
+  const flushBuffer = useCallback(() => {
+    if (flushTimerRef.current) {
+      clearTimeout(flushTimerRef.current);
+      flushTimerRef.current = null;
+    }
+    const text = bufferRef.current.join(" ").replace(/\s+/g, " ").trim();
+    bufferRef.current = [];
+    setCapturing(false);
+    if (text) void translateFinal(text);
+  }, [translateFinal]);
+
   const stop = useCallback(() => {
     listeningRef.current = false;
     setListening(false);
     recognitionRef.current?.stop();
-  }, []);
+    // Emit whatever was still buffered when the user stops.
+    flushBuffer();
+  }, [flushBuffer]);
 
   const start = useCallback(() => {
     const Ctor = getRecognitionCtor();
@@ -133,7 +161,19 @@ export default function SubtitleTranslator() {
       for (let i = event.resultIndex; i < event.results.length; i++) {
         const result = event.results[i];
         if (result.isFinal) {
-          void translateFinal(result[0].transcript);
+          const piece = result[0].transcript.trim();
+          if (!piece) continue;
+          // Accumulate finalized sentences; only flush after a pause so a
+          // continuous speech becomes one paragraph, not many fragments.
+          bufferRef.current.push(piece);
+          setCapturing(true);
+          if (flushTimerRef.current) clearTimeout(flushTimerRef.current);
+          const gap = groupingRef.current;
+          if (gap <= 0) {
+            flushBuffer();
+          } else {
+            flushTimerRef.current = setTimeout(flushBuffer, gap);
+          }
         }
       }
     };
@@ -168,12 +208,13 @@ export default function SubtitleTranslator() {
     } catch {
       /* ignore double-start */
     }
-  }, [stop, t, translateFinal]);
+  }, [stop, t, flushBuffer]);
 
   useEffect(() => {
     return () => {
       listeningRef.current = false;
       recognitionRef.current?.abort();
+      if (flushTimerRef.current) clearTimeout(flushTimerRef.current);
     };
   }, []);
 
@@ -181,6 +222,10 @@ export default function SubtitleTranslator() {
   function changeSource(next: string) {
     setSourceSpeech(next);
     sourceRef.current = next;
+    // Drop any half-captured paragraph — it was spoken in the old language.
+    if (flushTimerRef.current) clearTimeout(flushTimerRef.current);
+    bufferRef.current = [];
+    setCapturing(false);
     if (listeningRef.current) {
       recognitionRef.current?.abort();
       // onend won't fire cleanly after abort, so kick a fresh session.
@@ -229,11 +274,49 @@ export default function SubtitleTranslator() {
         </label>
       </div>
 
+      {/* Grouping control — how much speech to gather before showing a subtitle */}
+      <div className="flex items-center justify-center gap-2 flex-wrap text-xs">
+        <span className="eyebrow">{t("grouping")}</span>
+        <div
+          role="group"
+          className="inline-flex items-center bg-[var(--surface-2)] border border-[var(--border)] rounded-full p-0.5 font-sans font-semibold"
+        >
+          {[
+            { ms: 0, label: t("groupSentence") },
+            { ms: 2500, label: t("groupParagraph") },
+            { ms: 4500, label: t("groupLongParagraph") },
+          ].map((opt) => {
+            const active = groupingMs === opt.ms;
+            return (
+              <button
+                key={opt.ms}
+                type="button"
+                onClick={() => setGroupingMs(opt.ms)}
+                aria-pressed={active}
+                className={`px-3 h-7 rounded-full transition-colors ${
+                  active
+                    ? "bg-[var(--fg)] text-[var(--bg)]"
+                    : "text-[var(--muted)] hover:text-[var(--fg)]"
+                }`}
+              >
+                {opt.label}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
       {/* Subtitle stage — cinematic full-frame area */}
       <div
         ref={stageRef}
         className="relative bg-black text-white rounded-3xl border border-[var(--border)] overflow-y-auto min-h-[55dvh] max-h-[65dvh] flex flex-col justify-end px-5 sm:px-10 py-8"
       >
+        {capturing && (
+          <div className="absolute top-4 left-1/2 -translate-x-1/2 inline-flex items-center gap-2 text-xs text-white/70 bg-white/10 rounded-full px-3 py-1 backdrop-blur-sm">
+            <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+            {t("capturing")}
+          </div>
+        )}
         {lines.length === 0 ? (
           <p className="text-center text-white/40 font-serif italic text-lg my-auto">
             {listening ? t("listeningHint") : t("idleHint")}
